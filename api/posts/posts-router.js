@@ -11,9 +11,9 @@ router.get('/', (req, res) => {
     })
     .catch(error => {
       console.log(error);
-      res.status(500).json({ message: 'The posts information could not be retrieved'})
-    })
-})
+      res.status(500).json({ message: 'The posts information could not be retrieved' });
+    });
+});
 
 router.get('/:id', (req, res) => {
   Post.findById(req.params.id)
@@ -30,5 +30,17 @@ router.get('/:id', (req, res) => {
     });
 });
 
+router.post('/', async (req, res) => {
+  if(!req.body.title || !req.body.contents) {
+    res.status(400).json({ message: 'Please provide title and contents for the post' })
+  } else {
+    try {
+      const newPost = await Post.insert(req.body);
+      res.status(201).json(newPost)
+    } catch(error) {
+      res.status(500).json({ message: 'There was an error while saving the post to the database'})
+    }
+  }
+});
 
 module.exports = router;
